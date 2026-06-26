@@ -73,6 +73,43 @@ if ! "$HERMES_BIN" profile install "$PROFILE_REPO" --name "$PROFILE_ALIAS" --ali
     exit 1
 fi
 
+# ------------------------------------------------------------------
+# 金鑰引導：這份 distribution 需要使用者自己的 AITOKENKING_API_KEY。
+# 安裝完 .env 是空的（只有 .env.EXAMPLE 範本），若不填金鑰，
+# Hermes 一對話就會報金鑰錯誤。這裡幫使用者把 .env 準備好、打開、並印出說明。
+# ------------------------------------------------------------------
+PROFILE_DIR="${HERMES_HOME:-$HOME/.hermes}/profiles/$PROFILE_ALIAS"
+ENV_FILE="$PROFILE_DIR/.env"
+ENV_EXAMPLE="$PROFILE_DIR/.env.EXAMPLE"
+
+# 若還沒有 .env，就用範本複製一份出來給使用者填
+if [ ! -f "$ENV_FILE" ] && [ -f "$ENV_EXAMPLE" ]; then
+    cp "$ENV_EXAMPLE" "$ENV_FILE"
+fi
+
+# 偵測金鑰是否已填（環境變數已設、或 .env 裡 AITOKENKING_API_KEY= 後面有值）
+KEY_SET=0
+if [ -n "${AITOKENKING_API_KEY:-}" ]; then
+    KEY_SET=1
+elif [ -f "$ENV_FILE" ] && grep -Eq '^[[:space:]]*AITOKENKING_API_KEY=[^[:space:]]+' "$ENV_FILE"; then
+    KEY_SET=1
+fi
+
+if [ "$KEY_SET" -eq 0 ]; then
+    # 自動用預設文字編輯器打開 .env，讓使用者直接貼金鑰
+    [ -f "$ENV_FILE" ] && open -t "$ENV_FILE" 2>/dev/null || true
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "⚠️  最後一步：填入你的 API 金鑰才能使用"
+    echo ""
+    echo "   1. 已為你打開設定檔（若沒自動打開請手動編輯）："
+    echo "      $ENV_FILE"
+    echo "   2. 找到這一行，把金鑰貼在 = 後面："
+    echo "      AITOKENKING_API_KEY="
+    echo "   3. 存檔後，重新開啟 Hermes Desktop 即可使用。"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+fi
+
 echo ""
 echo "==> 啟動 Hermes Desktop..."
 # 重點：如果這個腳本是被 .pkg 的 postinstall 呼叫的，

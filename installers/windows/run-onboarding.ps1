@@ -95,6 +95,44 @@ try {
 }
 
 # ------------------------------------------------------------------
+# 金鑰引導：這份 distribution 需要使用者自己的 AITOKENKING_API_KEY。
+# 安裝完 .env 是空的（只有 .env.EXAMPLE 範本），若不填金鑰，
+# Hermes 一對話就會報金鑰錯誤。這裡幫使用者把 .env 準備好、打開、並印出說明。
+# ------------------------------------------------------------------
+$hermesHome = if ($env:HERMES_HOME) { $env:HERMES_HOME } else { Join-Path $env:USERPROFILE ".hermes" }
+$profileDir = Join-Path $hermesHome "profiles\$ProfileAlias"
+$envFile    = Join-Path $profileDir ".env"
+$envExample = Join-Path $profileDir ".env.EXAMPLE"
+
+# 若還沒有 .env，就用範本複製一份出來給使用者填
+if ((-not (Test-Path $envFile)) -and (Test-Path $envExample)) {
+    Copy-Item $envExample $envFile
+}
+
+# 偵測金鑰是否已填（環境變數已設、或 .env 裡 AITOKENKING_API_KEY= 後面有值）
+$keySet = $false
+if ($env:AITOKENKING_API_KEY) {
+    $keySet = $true
+} elseif ((Test-Path $envFile) -and (Select-String -Path $envFile -Pattern '^\s*AITOKENKING_API_KEY=\S+' -Quiet)) {
+    $keySet = $true
+}
+
+if (-not $keySet) {
+    # 自動用記事本打開 .env，讓使用者直接貼金鑰
+    if (Test-Path $envFile) { Start-Process notepad $envFile }
+    Write-Host ""
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Yellow
+    Write-Host "⚠️  最後一步：填入你的 API 金鑰才能使用" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "   1. 已為你打開設定檔（若沒自動打開請手動編輯）："
+    Write-Host "      $envFile"
+    Write-Host "   2. 找到這一行，把金鑰貼在 = 後面："
+    Write-Host "      AITOKENKING_API_KEY="
+    Write-Host "   3. 存檔後，重新開啟 Hermes Desktop 即可使用。"
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Yellow
+}
+
+# ------------------------------------------------------------------
 # 步驟 4：啟動桌面 App，讓使用者打開時看到的就是已經接好的聊天視窗
 # ------------------------------------------------------------------
 Write-Step "啟動 Hermes Desktop..."
