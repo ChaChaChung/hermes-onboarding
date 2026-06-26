@@ -132,6 +132,14 @@ if (-not $keySet) {
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Yellow
 }
 
+# Hermes Desktop 需要 node/npm。官方安裝會把 node bootstrap 到 ~\.hermes\node，
+# 但這個非互動 process 的 PATH 可能不含它，導致 desktop 報「npm not found」而開不起來。
+# 這裡把 hermes 自帶的 node 路徑補進這個 process 的 PATH。
+$nodeDirs = @((Join-Path $hermesHome "node"), (Join-Path $hermesHome "node\bin")) | Where-Object { Test-Path $_ }
+if ($nodeDirs) {
+    $env:PATH = ($nodeDirs -join ';') + ';' + $env:PATH
+}
+
 # ------------------------------------------------------------------
 # 步驟 4：啟動桌面 App，讓使用者打開時看到的就是已經接好的聊天視窗
 # ------------------------------------------------------------------

@@ -110,6 +110,11 @@ if [ "$KEY_SET" -eq 0 ]; then
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 fi
 
+# Hermes Desktop 需要 node/npm。官方安裝會把 node bootstrap 到 ~/.hermes/node/bin，
+# 但這個非互動 shell 的 PATH 很精簡，可能不含它（也可能不含 Homebrew / ~/.local/bin），
+# 導致 desktop 報「npm not found」而開不起來。這裡明確把常見的 node 路徑補進 PATH。
+export PATH="${HERMES_HOME:-$HOME/.hermes}/node/bin:$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+
 echo ""
 echo "==> 啟動 Hermes Desktop..."
 # 重點：如果這個腳本是被 .pkg 的 postinstall 呼叫的，
