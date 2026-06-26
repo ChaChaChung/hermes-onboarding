@@ -27,7 +27,7 @@
 
 ; ──────────────── 請依需求修改 ────────────────
 ; 你的 Profile Distribution git repo（前面討論的那份內建 proxy 設定的 repo）
-#define MyProfileRepo "github.com/你的帳號/你的profile-repo"
+#define MyProfileRepo "github.com/ChaChaChung/hermes-myagent-profile"
 ; 安裝完成後要建立的指令別名，使用者之後可以直接打 "myagent chat" 或 "myagent desktop"
 #define MyProfileAlias "myagent"
 ; ───────────────────────────────────────────────

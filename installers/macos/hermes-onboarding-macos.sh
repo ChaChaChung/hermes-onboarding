@@ -17,8 +17,8 @@
 
 set -euo pipefail
 
-# ──────────────── 請依需求修改 ────────────────
-PROFILE_REPO="github.com/你的帳號/你的profile-repo"   # 換成你的 Profile Distribution repo
+# ───────────────────────────────────────────────
+PROFILE_REPO="github.com/ChaChaChung/hermes-myagent-profile"
 PROFILE_ALIAS="myagent"                                # 安裝後的指令別名
 # ───────────────────────────────────────────────
 
@@ -73,7 +73,13 @@ fi
 
 echo ""
 echo "==> 啟動 Hermes Desktop..."
-"$HERMES_BIN" desktop -p "$PROFILE_ALIAS" &
+# 重點：如果這個腳本是被 .pkg 的 postinstall 呼叫的，
+# Installer 會一直等到本腳本的 stdout/stderr pipe 關閉才算「安裝完成」。
+# hermes desktop 是常駐 GUI 程式，若直接用 "&" 背景執行，它會繼承同一個
+# pipe 並一直握著不放 → Installer 永遠卡在「正在執行套件工序指令」。
+# 因此這裡用 nohup + 重導向 + </dev/null + disown 把它徹底跟 pipe 切開。
+nohup "$HERMES_BIN" desktop -p "$PROFILE_ALIAS" </dev/null >/tmp/hermes-desktop.log 2>&1 &
+disown 2>/dev/null || true
 
 echo ""
 echo "完成！可以關閉這個視窗了。"

@@ -37,7 +37,17 @@ set -e
 REAL_USER=$(stat -f "%Su" /dev/console)
 REAL_UID=$(id -u "$REAL_USER")
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-launchctl asuser "$REAL_UID" sudo -u "$REAL_USER" bash "$SCRIPT_DIR/hermes-onboarding-macos.sh"
+LOG=/tmp/hermes-onboarding-install.log
+
+# 重點：Installer 會一直等到 postinstall 的 stdout/stderr pipe 關閉，
+# 才把進度從「正在執行套件工序指令」往下走。
+# 因此這裡：
+#   * </dev/null  → 不要等任何標準輸入（curl|bash 等若想讀輸入就直接 EOF，不會卡住）
+#   * >"$LOG" 2>&1 → 安裝過程的輸出寫到 log，不要佔著 installer 的 pipe
+# 真正的安裝交給子腳本，本 postinstall 很快就會回傳，Installer 就不會卡住。
+# 安裝進度可在另一個終端機用 `tail -f /tmp/hermes-onboarding-install.log` 觀察。
+launchctl asuser "$REAL_UID" sudo -u "$REAL_USER" \
+    bash "$SCRIPT_DIR/hermes-onboarding-macos.sh" </dev/null >"$LOG" 2>&1
 POSTINSTALL_EOF
 chmod +x "$SCRIPTS_DIR/postinstall"
 
