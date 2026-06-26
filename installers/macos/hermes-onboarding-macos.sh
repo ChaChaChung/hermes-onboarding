@@ -66,7 +66,9 @@ echo "找到 hermes：$HERMES_BIN"
 
 echo ""
 echo "==> 安裝你的專屬設定（Profile Distribution: $PROFILE_REPO）..."
-if ! "$HERMES_BIN" profile install "$PROFILE_REPO" --name "$PROFILE_ALIAS" --alias -y; then
+# --force：若同名 profile 已存在就覆蓋「設定檔」，但保留使用者自己的 .env / 金鑰 /
+# 對話紀錄。這讓安裝程式可以安全地重複執行（重裝、更新都不會失敗）。
+if ! "$HERMES_BIN" profile install "$PROFILE_REPO" --name "$PROFILE_ALIAS" --alias --force -y; then
     echo "安裝 Profile Distribution 失敗。請確認 $PROFILE_REPO 這個 git repo 在使用者電腦上能存取到。" >&2
     exit 1
 fi

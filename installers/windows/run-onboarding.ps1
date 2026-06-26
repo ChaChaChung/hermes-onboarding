@@ -85,7 +85,9 @@ Write-Host "找到 hermes：$hermesExe"
 # ------------------------------------------------------------------
 Write-Step "安裝你的專屬設定（Profile Distribution: $ProfileRepo）..."
 try {
-    & $hermesExe profile install $ProfileRepo --name $ProfileAlias --alias -y
+    # --force：同名 profile 已存在時覆蓋設定檔，但保留使用者 .env / 金鑰 / 對話紀錄，
+    # 讓安裝程式可安全重複執行（重裝、更新都不會失敗）。
+    & $hermesExe profile install $ProfileRepo --name $ProfileAlias --alias --force -y
 } catch {
     Write-Warn "安裝 Profile Distribution 失敗：$($_.Exception.Message)"
     Write-Warn "請確認 $ProfileRepo 這個 git repo 使用者電腦上能存取到（公開 repo，或已設定好 git 認證）。"
