@@ -1,0 +1,15 @@
+# Inno Setup 編譯產物
+installers/windows/Output/
+
+# pkgbuild 編譯產物
+installers/macos/*.pkg
+
+# 系統雜檔
+.DS_Store
+Thumbs.db
+
+# 絕對不要把這些 commit 進公開 repo：
+# 任何 .env、API key、aitokenking 密鑰、簽名憑證 (.pfx / .p12) 都不該出現在這裡
+.env
+*.pfx
+*.p12

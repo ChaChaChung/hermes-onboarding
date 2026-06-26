@@ -1,0 +1,61 @@
+name: Build installers and publish release
+
+# 推一個版本 tag（例如 v1.0.0）就會自動觸發，
+# 也可以在 GitHub 網頁的 Actions 頁籤手動點 "Run workflow"
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch: {}
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安裝 Inno Setup
+        run: choco install innosetup -y
+
+      - name: 編譯 Windows 安裝包
+        run: iscc installers\windows\hermes-setup.iss
+
+      - name: 上傳編譯結果
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: installers/windows/Output/*.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 編譯 macOS 安裝包
+        run: |
+          chmod +x installers/macos/build-pkg.sh installers/macos/hermes-onboarding-macos.sh
+          cd installers/macos
+          ./build-pkg.sh
+
+      - name: 上傳編譯結果
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-installer
+          path: installers/macos/*.pkg
+
+  release:
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: 建立 GitHub Release 並附上安裝包
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/windows-installer/*.exe
+            artifacts/macos-installer/*.pkg
