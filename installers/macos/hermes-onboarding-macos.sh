@@ -117,6 +117,9 @@ export PATH="${HERMES_HOME:-$HOME/.hermes}/node/bin:$HOME/.local/bin:/opt/homebr
 
 echo ""
 echo "==> 啟動 Hermes Desktop..."
+echo ""
+echo "    （第一次啟動需要編譯桌面程式，約 2～5 分鐘，期間畫面可能沒有反應，"
+echo "      請耐心等候，視窗會自動開啟。）"
 # 重點：如果這個腳本是被 .pkg 的 postinstall 呼叫的，
 # Installer 會一直等到本腳本的 stdout/stderr pipe 關閉才算「安裝完成」。
 # hermes desktop 是常駐 GUI 程式，若直接用 "&" 背景執行，它會繼承同一個
@@ -126,4 +129,5 @@ nohup "$HERMES_BIN" desktop -p "$PROFILE_ALIAS" </dev/null >/tmp/hermes-desktop.
 disown 2>/dev/null || true
 
 echo ""
-echo "完成！可以關閉這個視窗了。"
+echo "安裝完成！Hermes Desktop 正在背景準備中，視窗會在編譯完成後自動開啟。"
+echo "（即使關閉這個視窗，Desktop 也會繼續在背景啟動。）"

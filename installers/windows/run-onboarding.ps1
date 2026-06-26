@@ -144,7 +144,10 @@ if ($nodeDirs) {
 # 步驟 4：啟動桌面 App，讓使用者打開時看到的就是已經接好的聊天視窗
 # ------------------------------------------------------------------
 Write-Step "啟動 Hermes Desktop..."
+Write-Host ""
+Write-Host "    （第一次啟動需要編譯桌面程式，約 2～5 分鐘，期間畫面可能沒有反應，"
+Write-Host "      請耐心等候，視窗會自動開啟。）"
 Start-Process -FilePath $hermesExe -ArgumentList "desktop", "-p", $ProfileAlias
 
 Write-Host ""
-Write-Host "完成！" -ForegroundColor Green
+Write-Host "安裝完成！Hermes Desktop 正在背景準備中，視窗會在編譯完成後自動開啟。" -ForegroundColor Green
