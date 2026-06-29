@@ -66,6 +66,12 @@
     transition:transform .15s ease;
   }
   .nav-cta:hover{transform:translateY(-1px);}
+  .nav-actions{display:flex;align-items:center;gap:18px;}
+  .nav-login{
+    font-family:var(--sans);font-weight:700;font-size:14px;
+    color:var(--ink);text-decoration:none;transition:opacity .15s ease;
+  }
+  .nav-login:hover{opacity:.6;}
 
   /* ---------- HERO ---------- */
   .hero{padding:88px 0 64px;}
@@ -279,7 +285,10 @@
 <header class="nav">
   <div class="nav-inner">
     <div class="wordmark">HERMES AGENT <span class="pct">−5%</span></div>
-    <a class="nav-cta" href="#download">下載</a>
+    <div class="nav-actions">
+      <a class="nav-login" href="https://hermes-proxy-nvgnvrr6za-uw.a.run.app/login">登入</a>
+      <a class="nav-cta" href="#download">下載</a>
+    </div>
   </div>
 </header>
 
