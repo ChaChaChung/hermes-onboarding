@@ -1,10 +1,11 @@
-# Hermes Agent（暫定名稱）官網 + 安裝包 repo
+# Hermes Agent（暫定名稱）安裝包 repo
 
-這個 repo 包含三個部分：
+> 官網首頁（`index.html`）已搬到 `hermes-proxy` repo，改由 proxy 服務在根路徑 `/` 直接提供（檔案位於 `hermes-proxy/app/static/index.html`）。這個 repo 現在只負責安裝包的打包與發布。
+
+這個 repo 包含兩個部分：
 
 ```
 .
-├── index.html                          ← 官網首頁，由 GitHub Pages 直接顯示
 ├── installers/
 │   ├── README.md                       ← 安裝包詳細說明（簽名、打包步驟等）
 │   ├── windows/
@@ -34,15 +35,9 @@ git push -u origin main
 
 ---
 
-## 開啟 GitHub Pages
+## 官網首頁
 
-1. 進 repo 的 **Settings → Pages**
-2. Source 選 **Deploy from a branch**
-3. Branch 選 `main`，目錄選 `/ (root)`
-4. 存檔，等 1-2 分鐘，網址會是：
-   `https://你的帳號.github.io/你的repo名稱/`
-
-想用自己的網域：在 repo 根目錄加一個 `CNAME` 檔案，內容就是你的網域（例如 `app.yourdomain.com`），然後去你的 DNS 服務加一筆 CNAME 指到 `你的帳號.github.io`。
+首頁已不再由這個 repo 的 GitHub Pages 提供，而是搬到 `hermes-proxy`，由 proxy 服務直接在根路徑 `/` 回傳 `app/static/index.html`。要改首頁內容請到那個 repo 編輯後重新部署 proxy。
 
 ---
 
@@ -62,7 +57,7 @@ git push -u origin main
 https://github.com/你的帳號/你的repo名稱/releases/download/v1.0.0/HermesAgent-Setup.exe
 ```
 
-把這個網址貼到 `index.html` 裡那兩個下載按鈕的 `href`，就完成串接了。
+把這個網址貼到 `hermes-proxy/app/static/index.html` 裡那兩個下載按鈕的 `href`，就完成串接了。
 
 ### 這個 workflow 還沒處理的事
 
