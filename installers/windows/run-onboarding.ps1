@@ -95,7 +95,7 @@ try {
 }
 
 # ------------------------------------------------------------------
-# 金鑰引導：這份 distribution 需要使用者自己的 AITOKENKING_API_KEY。
+# 金鑰引導：這份 distribution 需要使用者自己的 HERMES_PROXY_API_KEY。
 # 安裝完 .env 是空的（只有 .env.EXAMPLE 範本），若不填金鑰，
 # Hermes 一對話就會報金鑰錯誤。這裡幫使用者把 .env 準備好、打開、並印出說明。
 # ------------------------------------------------------------------
@@ -109,11 +109,11 @@ if ((-not (Test-Path $envFile)) -and (Test-Path $envExample)) {
     Copy-Item $envExample $envFile
 }
 
-# 偵測金鑰是否已填（環境變數已設、或 .env 裡 AITOKENKING_API_KEY= 後面有值）
+# 偵測金鑰是否已填（環境變數已設、或 .env 裡 HERMES_PROXY_API_KEY= 後面有值）
 $keySet = $false
-if ($env:AITOKENKING_API_KEY) {
+if ($env:HERMES_PROXY_API_KEY) {
     $keySet = $true
-} elseif ((Test-Path $envFile) -and (Select-String -Path $envFile -Pattern '^\s*AITOKENKING_API_KEY=\S+' -Quiet)) {
+} elseif ((Test-Path $envFile) -and (Select-String -Path $envFile -Pattern '^\s*HERMES_PROXY_API_KEY=\S+' -Quiet)) {
     $keySet = $true
 }
 
@@ -127,7 +127,7 @@ if (-not $keySet) {
     Write-Host "   1. 已為你打開設定檔（若沒自動打開請手動編輯）："
     Write-Host "      $envFile"
     Write-Host "   2. 找到這一行，把金鑰貼在 = 後面："
-    Write-Host "      AITOKENKING_API_KEY="
+    Write-Host "      HERMES_PROXY_API_KEY="
     Write-Host "   3. 存檔後，重新開啟 Hermes Desktop 即可使用。"
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Yellow
 }
